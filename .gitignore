@@ -1,0 +1,11 @@
+#ÎÄ¼þ¼Ð¹ýÂË
+proj.win32/
+proj.ios/
+proj.winrt/
+proj.blackberry/
+proj.ios/
+proj.linux/
+proj.marmalade/
+proj.android/
+proj.mac/
+proj.wp8/
