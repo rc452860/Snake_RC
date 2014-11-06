@@ -9,19 +9,18 @@ USING_NS_CC_EXT;
 class Snake
 {
 public:
-	Snake(int len);
-	Snake(int len,ccColor3B color);
+	Snake();
 	~Snake();
 public:
 	bool checkEatSelf();
-	bool EatFoot(SnakeUnit* unit);
+	bool EatFoot(CCPoint* position);
 public:
-	int Dir;
-	list<SnakeUnit*> *body;
-	SnakeUnit* head;
+	CCPoint Dir;
+	list<CCPoint*> *body;
+	CCPoint* head;
 	int len;
-	ccColor3B color;
 protected:
+
 private:
 };
 

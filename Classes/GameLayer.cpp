@@ -22,38 +22,13 @@ GameLayer::~GameLayer()
 
 }
 
-void GameLayer::AddFoot()
-{
-
-	this->foot = SnakeUnit::create(ccc3(255,255,0));
-	bool flag = true;	
-	while(flag)
-	{
-		flag = false;
-		foot->x = rand()%MARITX_X;
-		foot->y = rand()%MARITX_Y;
-		list<SnakeUnit*>::iterator begin = snake->body->begin();
-		while(begin!= snake->body->end())
-		{
-			SnakeUnit* item = *begin;
-			if (item->x == foot->x && item->y == foot->y)
-			{
-				flag = true;
-				break;
-			}
-			begin++;
-		}
-	}
-	foot->setPosition(foot->x,foot->y);
-	this->addChild(foot);
-}
 bool GameLayer::init()
 {
 
 	setKeypadEnabled(true); 
 	CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this,0,true);
 	this->initWithColor(ccc4(255,255,255,255));
-	
+
 
 	CCMenu* pMenu = CCMenu::create();
 	CCMenuItemImage* pMenuItme = CCMenuItemImage::create("pause.png","pause.png","",this,menu_selector(GameLayer::GamePause));
@@ -68,24 +43,22 @@ bool GameLayer::init()
 	pMenu->addChild(pMenuItme2);
 	pMenu->addChild(pMenuItme3);
 	this->addChild(pMenu);
-	snake = new Snake(4);
-	list<SnakeUnit*>::iterator begin;
-	for (begin=snake->body->begin(); begin!=snake->body->end(); ++begin) 
-	{
- 		SnakeUnit* item =/*(SnakeUnit*)&*/ *begin;
-		this->addChild(item);
-	}
-	AddFoot();
-	this->scheduleUpdate();
-	this->schedule(schedule_selector(GameLayer::Move), 0.2f);
+	snake = new Snake();
 
-/*
+	/*AddFoot();
+	this->scheduleUpdate();
+	this->schedule(schedule_selector(GameLayer::Move), 0.2f);*/
+
+	/*
 	this->pGameMap = GameMapLayer::create();
 	this->addChild(pGameMap);*/
+
+	initMapMaritx();
 	return true;
 }
 
 
+/*
 void GameLayer::draw()
 {
 	CCLayerColor::draw();
@@ -101,7 +74,7 @@ void GameLayer::draw()
 	{
 		ccDrawLine(ccp(GameMatrix.getMinX(),i*GRID+GameMatrix.getMinY()),ccp(GameMatrix.getMaxX(),i*GRID+GameMatrix.getMinY()));
 	}
-}
+}*/
 //win下方向键支持
 void GameLayer::keyArrowClicked(int arrow)  
 {  
@@ -145,10 +118,11 @@ void GameLayer::update(float dt)
 {
 	//默认定时器
 	//CCLog("%f",snake->head->getPositionX()+dt);
-	
-	
+
+
 }
 
+/*
 void GameLayer::Move(float dt)
 {
 	if (snake->head->checkOverflow(snake->head->x+snake->Dir.x,snake->head->y+snake->Dir.y))
@@ -169,13 +143,13 @@ void GameLayer::Move(float dt)
 		{
 			snake->head->y = MARITX_Y-1;
 		}
-		
+
 	}
 	//设定定时器
 	if (snake->checkEatSelf())
 	{
 		CCDirector::sharedDirector()->getTouchDispatcher()->removeDelegate(this);
-		
+
 		unschedule(schedule_selector(GameLayer::Move));
 		return;
 	}
@@ -187,7 +161,7 @@ void GameLayer::Move(float dt)
 	list<SnakeUnit*>::iterator begin;
 	for (begin=snake->body->begin(); begin!=snake->body->end(); ++begin) 
 	{
-		SnakeUnit* item =/*(SnakeUnit*)&*/ *begin;
+		SnakeUnit* item =/ *(SnakeUnit*)&* / *begin;
 		list<SnakeUnit*>::iterator swap = begin;
 		if (++swap !=snake->body->end())
 		{
@@ -195,9 +169,8 @@ void GameLayer::Move(float dt)
 			item->setPosition(item2->x,item2->y);
 		}
 	}
-	snake->head->setPosition(snake->head->x+snake->Dir.x,snake->head->y+snake->Dir.y);
 	isChangeDir = false;
-}
+}*/
 
 bool GameLayer::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent)
 {
@@ -234,7 +207,7 @@ void GameLayer::ccTouchEnded(CCTouch *pTouch, CCEvent *pEvent)
 }
 void GameLayer::ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent)
 {
-	
+
 }
 
 
@@ -276,36 +249,113 @@ void GameLayer::GameRestart(CCObject *sender)
 
 void GameLayer::initMapMaritx()
 {	
+
+	this->m_height = 20;
+	this->m_width = 20;
 	vector<int> intV;
+	//测试数据
 	for (int i = 0;i<20;i++)
 	{
-		 intV.clear();javascript:;
-		 for (int j = 0;j<20;j++)
+		intV.clear();javascript:;
+		for (int j = 0;j<20;j++)
 			intV.push_back(1);
-		 m_MapMaritx.push_back(intV);
+		m_MapMaritx.push_back(intV);
 	}
 	for (int i = 0;i<4;i++)
 	{
-		m_MapMaritx[10][i] = 7;
 		if (i == 3)
 		{
-			i = 77;
+			m_MapMaritx[10][i] = 77;
+		}
+		else
+		{
+			m_MapMaritx[10][i] = 7;
 		}
 	}
 	vector<CCSprite*> CCspriteUnit;
-	int x = 0,y = 0;
-	bool isFind = false;
-	while (!isFind)
+	int x = 0;
+	bool isFinish = false;
+	while (x<this->m_width && !isFinish)
 	{
-		while(!isFind)
+		int y = 0;
+		while(y<this->m_height && !isFinish)
 		{
-			if (m_MapMaritx[x][y] == 77)
+			if (m_MapMaritx[x][y] == MapType(SnakeHead))
 			{
-				isFind = true;
+				snake->head->x = x;
+				snake->head->y = y;
+				isFinish = true;
 			}
 			y++;
 		}
 		x++;
 	}
+	initSnake();
 }
+
+
+void GameLayer::initSnake()
+{
+	bool ifFinishBody = false;
+	CCPoint* preBody;
+	int x = snake->head->x,y = snake->head->y;
+	//找到蛇的方向
+	if (m_MapMaritx[x+1][y] == MapType(SnakeBody))
+	{
+		snake->Dir =CCPoint(-1,0);
+		preBody = new CCPoint(++x,y);
+	}
+	else if (m_MapMaritx[x-1][y]  == MapType(SnakeBody))
+	{
+		snake->Dir =CCPoint(1,0);
+		preBody = new CCPoint(--x,y);
+	}
+	else if (m_MapMaritx[x][y-1] == MapType(SnakeBody))
+	{
+		snake->Dir =CCPoint(0,1);
+		preBody = new CCPoint(x,--y);
+	}
+	else if (m_MapMaritx[x][y+1]== MapType(SnakeBody))
+	{
+		snake->Dir = CCPoint(x,-1);
+		preBody = new CCPoint(x,++y);
+	}
+	snake->body->push_back(preBody);
+	//找到蛇的身体
+	while (!ifFinishBody)
+	{
+		CCPoint *pTemp = snake->body->back();
+		if (y-1>0&&y+1<m_height&&x-1>0&&x+1<m_width)
+		{
+			if (m_MapMaritx[x+1][y] == MapType(SnakeBody)&&pTemp->x != x+1)
+			{
+				preBody = new CCPoint(++x,y);
+			}
+			else if (m_MapMaritx[x-1][y]  == MapType(SnakeBody)&&pTemp->x != x-1)
+			{
+				preBody = new CCPoint(--x,y);
+			}
+			else if (m_MapMaritx[x][y-1] == MapType(SnakeBody)&&pTemp->y != y-1)
+			{
+				preBody = new CCPoint(x,--y);
+			}
+			else if (m_MapMaritx[x][y+1]== MapType(SnakeBody)&&pTemp->y != y+1)
+			{
+				preBody = new CCPoint(x,++y);
+			}
+			else
+			{
+				ifFinishBody = true;
+			}
+			
+		}
+		else
+		{
+			ifFinishBody = true;
+		}
+		snake->body->push_back(preBody);
+	}
+	CCLog("finish find snake body");
+}
+
 

@@ -12,7 +12,7 @@ public:
 	~SnakeUnit();
 	int x,y;
 	bool init();
-	void setPosition(int x,int y);
+	void setPosition();
 	bool checkOverflow(int x,int y);
 	bool checkOverflow();
 	bool init(ccColor3B color);

@@ -16,6 +16,13 @@
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+
+enum MapType{
+	Space = 0,
+	SnakeHead = 77,
+	SnakeBody = 7
+};
+
 class GameLayer:public CCLayerColor
 {
 public:
@@ -24,8 +31,8 @@ public:
 public:
 	bool init();
 	CREATE_FUNC(GameLayer);
-	void Move(float dt);
-	void draw();
+	//void Move(float dt);
+	//void draw();
 	bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
 	void ccTouchEnded(CCTouch *pTouch, CCEvent *pEvent);
 	void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
@@ -40,14 +47,13 @@ public:
 	void AddFoot();
 	//初始化地图
 	void initMapMaritx();
-	void initSnake(int x,int y);
+	void initSnake();
 	//移动地图
 	void MapMaritx();
 public:
 	CCSize m_Size;
 	CCRect GameMatrix;
 	int Maritx[MARITX_X][MARITX_Y];
-	SnakeUnit* foot;
 	bool isPause;
 	bool isChangeDir;
 	CCRect GameRect;
@@ -57,8 +63,12 @@ public:
 	std::vector<vector<int>> m_MapMaritx;
 	std::vector<vector<CCSprite*>> m_MapBlockUnit;
 	list<CCPoint> DirList;
+	int m_height;
+	int m_width;
 protected:
 private:
 };
+
+
 
 #endif
