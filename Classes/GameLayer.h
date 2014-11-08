@@ -3,8 +3,7 @@
 #define __GAME_START_H__
 
 #define GRID 20 //格子大小
-#define WIDTH 480
-#define HEIGHT 480
+#define RECTANGLE 980
 #define MARITX_X WIDTH/GRID
 #define MARITX_Y HEIGHT/GRID
 
@@ -13,6 +12,7 @@
 #include "snake.h"
 #include "GameMapLayer.h"
 #include <iostream>
+#include "MapUnit.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -48,12 +48,13 @@ public:
 	//初始化地图
 	void initMapMaritx();
 	void initSnake();
+	void initMapUnit();
+	int CalculatePosition(int Num_1,int Num_2,bool isHorizontal,bool isZero);
 	//移动地图
 	void MapMaritx();
 public:
 	CCSize m_Size;
 	CCRect GameMatrix;
-	int Maritx[MARITX_X][MARITX_Y];
 	bool isPause;
 	bool isChangeDir;
 	CCRect GameRect;
@@ -61,11 +62,12 @@ public:
 	GameMapLayer* pGameMap;
 	CCPoint prePoint;
 	std::vector<vector<int>> m_MapMaritx;
-	std::vector<vector<CCSprite*>> m_MapBlockUnit;
+	std::vector<vector<MapUnit*>> m_MapBlockUnit;
 	list<CCPoint> DirList;
 	int m_height;
 	int m_width;
 protected:
+
 private:
 };
 

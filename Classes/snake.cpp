@@ -43,3 +43,19 @@ bool Snake::EatFoot(CCPoint* position)
 	}
 	return false;
 }
+
+
+bool Snake::isInstanceOf(int x,int y)
+{
+	list<CCPoint*>::iterator begin = body->begin();
+	while(begin != body->end())
+	{
+		CCPoint *pTemp = *begin;
+		if (pTemp->x == x&&pTemp->y == y)
+		{
+			return true;
+		}
+		begin++;
+	}
+	return false;
+}

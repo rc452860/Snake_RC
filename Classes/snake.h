@@ -14,6 +14,7 @@ public:
 public:
 	bool checkEatSelf();
 	bool EatFoot(CCPoint* position);
+	bool isInstanceOf(int x,int y);
 public:
 	CCPoint Dir;
 	list<CCPoint*> *body;
