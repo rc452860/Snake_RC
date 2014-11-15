@@ -1,6 +1,5 @@
 #include "AppDelegate.h"
 #include "GameStartLayer.h"
-#include "testLayer.h"
 
 USING_NS_CC;
 

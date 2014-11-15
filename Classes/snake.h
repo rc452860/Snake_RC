@@ -1,6 +1,5 @@
 #ifndef __SNAKE_H__
 #define __SNAKE_H__
-#include "SnakeUnit.h"
 #include "cocos-ext.h"
 #include "cocos2d.h"
 using namespace std;

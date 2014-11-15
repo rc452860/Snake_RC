@@ -23,6 +23,8 @@ bool GameStartLayer::init()
 
 void GameStartLayer::ButtonCallback(CCObject* sender, TouchEventType type)
 {
+	if (type!=TouchEventType(TOUCH_EVENT_ENDED))
+		return;
 	UIButton* clicker = (UIButton*)sender;
 	if (clicker->getTag() == 1)
 	{

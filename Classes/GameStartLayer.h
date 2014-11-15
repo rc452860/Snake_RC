@@ -13,7 +13,6 @@ public:
 	UIButton* UIExit;
 	void ButtonCallback(CCObject* sender, TouchEventType type);
 	CREATE_FUNC(GameStartLayer);
-	
 private:
 };
 #endif
