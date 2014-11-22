@@ -14,14 +14,21 @@ public:
 	bool checkEatSelf();
 	bool EatFoot(CCPoint* position);
 	bool isInstanceOf(int x,int y);
+	void shiftSnake();
+	CCPoint* getDir();
+	void setParent(CCNode* parent);
+	CCNode* getParent();
 public:
-	CCPoint Dir;
+	list<CCPoint*>::iterator Dir;
 	list<CCPoint*> *body;
+	list<CCPoint*> *corner;
 	CCPoint* head;
 	int len;
+	
 protected:
 
 private:
+	CCNode* parent;
 };
 
 #endif
