@@ -1,6 +1,7 @@
 #include "GameLayer.h"
 #include "snake.h"
 #include "VisibleRect.h"
+#include "snakeBlock.h"
 #include "GameStartLayer.h"
 
 
@@ -13,6 +14,7 @@ GameLayer::GameLayer()
 	DirList.push_back(new ccp(0,1));
 	DirList.push_back(new ccp(1,0));
 	DirList.push_back(new ccp(0,-1));
+	gameSpeed = 0.2f;
 }
 GameLayer::~GameLayer()
 {
@@ -41,7 +43,7 @@ bool GameLayer::init()
 	this->addChild(pMenu);
 	snake = new Snake();
 	snake->setParent(this);
-	this->schedule(schedule_selector(GameLayer::Move),0.2f);
+	this->schedule(schedule_selector(GameLayer::Move),gameSpeed);
 	initMapMaritx();
 	return true;
 }
@@ -57,12 +59,12 @@ void GameLayer::keyArrowClicked(int arrow)
 		if (arrow == kTypeLeftArrowClicked)
 		{
 			setDir(false);
-			m_GameLayout->runAction(CCSequence::create(CCRotateBy::create(0.2,90),CCCallFunc::create(this,callfunc_selector(GameLayer::animateOver)),NULL));
+			m_GameLayout->runAction(CCSequence::create(CCRotateBy::create(gameSpeed,90),CCCallFunc::create(this,callfunc_selector(GameLayer::animateOver)),NULL));
 		}
 		else if(arrow == kTypeRightArrowClicked)
 		{
 			setDir(true);
-			m_GameLayout->runAction(CCSequence::create(CCRotateBy::create(0.2,-90),CCCallFunc::create(this,callfunc_selector(GameLayer::animateOver)),NULL));
+			m_GameLayout->runAction(CCSequence::create(CCRotateBy::create(gameSpeed,-90),CCCallFunc::create(this,callfunc_selector(GameLayer::animateOver)),NULL));
 		}
 		
 		/*CCPoint* pDir = snake->getDir();
@@ -112,6 +114,7 @@ void GameLayer::update(float dt)
 }
 void GameLayer::MoveMapMaritx()
 {
+#pragma region 转向
 	//左上右下的顺序
 	if (snake->getDir()->x == -1&&snake->getDir()->y == 0)
 	{
@@ -241,7 +244,9 @@ void GameLayer::MoveMapMaritx()
 			}
 		}
 	}
-	snake->shiftSnake();
+#pragma endregion 转向
+	
+	snake->shiftSnake(isChangeDir);
 	makeSnake();
 	//方向左
 	/*for (int nRowIndex = (m_MapBlockUnit.size()-1);nRowIndex>=0;nRowIndex--)
@@ -713,7 +718,7 @@ void GameLayer::initMapUnit()
 	for (int i = 0;i<RECTANGLE/GRID;i++)
 	{
 		MapTempUnit.clear();
-		for (int j = 0;j<RECTANGLE /GRID ;j++)
+		for (int j = 0;j<RECTANGLE /GRID;j++)
 		{
 			if (i==0&&j==0)
 			{
@@ -778,6 +783,10 @@ int GameLayer::CalculatePosition(int Num_1,int Num_2,bool isHorizontal,bool isZe
 	}
 }
 
+void GameLayer::setGameLayerDir()
+{
+	CCPoint* pDir = snake->getDir();
+}
 void GameLayer::setDir(bool positive)
 {
 	if (positive)
@@ -826,6 +835,7 @@ void GameLayer::setDir(int x,int y)
 		CCLog("find dir");
 	else
 		CCLog("not find");
+	setGameLayerDir();
 }
 
 void GameLayer::makeSnake()
@@ -842,8 +852,9 @@ void GameLayer::makeSnake()
 				CCPoint* pPoint = *begin;
 				if (tempUnit->x == pPoint->x && tempUnit->y == pPoint->y)
 				{
-					MapUnit* snakeBodyUnit = MapUnit::create(7);
-					//snakeBodyUnit->setPosition(ccp(nRowIndex*GRID+(GRID/2),nColIndex*GRID+(GRID/2)));
+					snakeBlock* snakeBodyUnit = snakeBlock::create(snakeBody);
+					//MapUnit* snakeBodyUnit = MapUnit::create(7);
+					snakeBodyUnit->setPosition(ccp(nRowIndex*GRID+(GRID/2),nColIndex*GRID+(GRID/2)));
 					snakeBodyUnit->setPosition(ccp((GRID/2),(GRID/2)));
 					tempUnit->addChild(snakeBodyUnit);
 				}

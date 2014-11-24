@@ -5,6 +5,8 @@ Snake::Snake()
 {
 	this->body = new list<CCPoint*>();
 	this->head = new CCPoint();
+	cornerNum = 0;
+	corner = new queue<snakeUnit*>();
 }
 Snake::~Snake()
 {
@@ -60,7 +62,7 @@ bool Snake::isInstanceOf(int x,int y)
 	return false;
 }
 
-void Snake::shiftSnake()
+void Snake::shiftSnake(bool ischangeDir)
 {
 	list<CCPoint*>::reverse_iterator end = body->rbegin();
 	while (end!=body->rend())
@@ -75,6 +77,7 @@ void Snake::shiftSnake()
 		}
 		else
 		{
+			
 			GameLayer* pParent = (GameLayer*)this->parent;
 			int mapSize = pParent->m_MapMaritx.size();
 			head->x+=getDir()->x;

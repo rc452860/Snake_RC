@@ -54,6 +54,7 @@ public:
 	void setDir(int x,int y);
 	//游戏方向旋转动作结束
 	void animateOver();
+	void setGameLayerDir();
 public:
 	CCSize m_Size;
 	CCRect GameMatrix;
@@ -68,6 +69,8 @@ public:
 	int m_height;
 	int m_width;
 	CCSprite *m_GameLayout;
+	//游戏速度
+	float gameSpeed;
 protected:
 
 private:
