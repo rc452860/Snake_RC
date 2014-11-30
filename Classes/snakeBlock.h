@@ -22,6 +22,7 @@ public:
 	///·½·¨
 public:
 	static snakeBlock* create(snakeEnum block);
+	static snakeBlock* create(snakeEnum block,CCPoint dir);
 	CREATE_FUNC(snakeBlock);
 	///×Ö¶Î
 public:

@@ -1,9 +1,11 @@
 #include "snakeUnit.h"
 #include "GameLayer.h"
 
-snakeUnit::snakeUnit()
+snakeUnit::snakeUnit(CCPoint bodyUnit,CCPoint dir)
 {
-
+	this->x = bodyUnit.x;
+	this->y = bodyUnit.y;
+	this->Dir = dir;
 }
 
 

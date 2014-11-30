@@ -50,11 +50,11 @@ public:
 	void makeSnake();
 	//设置方向
 	void setDir(bool positive);
-	void setDir(int position);
 	void setDir(int x,int y);
 	//游戏方向旋转动作结束
 	void animateOver();
-	void setGameLayerDir();
+	//void setGameLayerDir();
+	void InitLayerRote();
 public:
 	CCSize m_Size;
 	CCRect GameMatrix;
@@ -65,12 +65,14 @@ public:
 	CCPoint prePoint;
 	std::vector<vector<int>> m_MapMaritx;
 	std::vector<vector<MapUnit*>> m_MapBlockUnit;
-	list<CCPoint*> DirList;
+	list<CCPoint> DirList;
 	int m_height;
 	int m_width;
 	CCSprite *m_GameLayout;
-	//游戏速度
+	//游戏速度	
 	float gameSpeed;
+	//设置地图方向与蛇对应
+	list<CCPoint>::iterator m_currentDir;
 protected:
 
 private:

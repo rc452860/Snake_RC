@@ -27,12 +27,26 @@ snakeBlock* snakeBlock::create(snakeEnum block)
 		tempName = CCString::create("snake/snakeBody.png");
 		break;
 	}
-	
+
 	if (pobSprite && pobSprite->initWithFile(tempName->getCString()))
 	{
+		
 		pobSprite->autorelease();
 		return pobSprite;
 	}
 	CC_SAFE_DELETE(pobSprite);
 	return NULL;
+}
+snakeBlock* snakeBlock::create(snakeEnum block,CCPoint dir)
+{
+	snakeBlock* pobSprite = snakeBlock::create(block);
+	if(dir.x == 1)
+		pobSprite->setRotation(180);
+	else if(dir.x == -1)
+		pobSprite->setRotation(0);
+	else if(dir.y == 1)
+		pobSprite->setRotation(90);
+	else if(dir.y == -1)
+		pobSprite->setRotation(270);
+	return pobSprite;
 }

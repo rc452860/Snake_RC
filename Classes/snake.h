@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "queue"
 #include "snakeUnit.h"
+#include "cornerUnit.h"
 using namespace std;
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -15,22 +16,21 @@ public:
 	Snake();
 	~Snake();
 public:
-	bool init();
-	bool checkEatSelf();
-	bool EatFoot(CCPoint* position);
-	bool isInstanceOf(int x,int y);
-	void shiftSnake(bool ischangeDir);
-	CCPoint* getDir();
-	void setParent(CCNode* parent);
-	CCNode* getParent();
+	void init(CCPoint start,CCPoint dir);
+	void setParent(CCNode* pt);
+	snakeUnit* getHead();
+	snakeUnit* getTail();
+	CCPoint getDir();
+	void setDir(int x,int y);
+	void shiftSnake();
+	void pushCorner(bool isCorner);
+	void clearCorner();
+	cornerUnit* isCorner(snakeUnit* body);
+	void reviseOverflow(snakeUnit* item);
 public:
-	list<CCPoint*>::iterator Dir;
-	list<CCPoint*> *body;
-	queue<snakeUnit*> *corner;
-	int cornerNum;
-	CCPoint* head;
-	int len;
-	
+	//list中第一个为头结点
+	list<snakeUnit*>* body;
+	list<cornerUnit*>* corner;
 protected:
 
 private:

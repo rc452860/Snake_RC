@@ -10,7 +10,7 @@ class snakeUnit
 {
 //构造函数
 public:
-	snakeUnit();
+	snakeUnit(CCPoint bodyUnit,CCPoint dir);
 	~snakeUnit();
 //方法
 public:
@@ -20,9 +20,9 @@ public:
 	int x;
 	int y;
 	CCPoint Dir;
-	snakeBlock* block;
 protected:
 private:
+	CCNode* parent;
 };
 
 #endif

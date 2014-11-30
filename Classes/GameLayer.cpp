@@ -3,6 +3,7 @@
 #include "VisibleRect.h"
 #include "snakeBlock.h"
 #include "GameStartLayer.h"
+#include "cornerUnit.h"
 
 
 GameLayer::GameLayer()
@@ -10,10 +11,10 @@ GameLayer::GameLayer()
 	m_Size =  CCDirector::sharedDirector()->getWinSize();
 	isPause = false;
 	isChangeDir = false;
-	DirList.push_back(new ccp(-1,0));
-	DirList.push_back(new ccp(0,1));
-	DirList.push_back(new ccp(1,0));
-	DirList.push_back(new ccp(0,-1));
+	DirList.push_back(ccp(-1,0));
+	DirList.push_back(ccp(0,1));
+	DirList.push_back(ccp(1,0));
+	DirList.push_back(ccp(0,-1));
 	gameSpeed = 0.2f;
 }
 GameLayer::~GameLayer()
@@ -45,6 +46,7 @@ bool GameLayer::init()
 	snake->setParent(this);
 	this->schedule(schedule_selector(GameLayer::Move),gameSpeed);
 	initMapMaritx();
+	InitLayerRote();
 	return true;
 }
 
@@ -66,7 +68,6 @@ void GameLayer::keyArrowClicked(int arrow)
 			setDir(true);
 			m_GameLayout->runAction(CCSequence::create(CCRotateBy::create(gameSpeed,-90),CCCallFunc::create(this,callfunc_selector(GameLayer::animateOver)),NULL));
 		}
-		
 		/*CCPoint* pDir = snake->getDir();
 		if (arrow == kTypeLeftArrowClicked&&pDir->x!=1)  
 		{  
@@ -116,7 +117,7 @@ void GameLayer::MoveMapMaritx()
 {
 #pragma region 转向
 	//左上右下的顺序
-	if (snake->getDir()->x == -1&&snake->getDir()->y == 0)
+	if (snake->getDir().x == -1&&snake->getDir().y == 0)
 	{
 		for (int nRowIndex = (m_MapBlockUnit.size()-1);nRowIndex>=0;nRowIndex--)
 		{
@@ -145,7 +146,7 @@ void GameLayer::MoveMapMaritx()
 			}
 		}
 	}
-	else if(snake->getDir()->x ==0&&snake->getDir()->y ==1)
+	else if(snake->getDir().x ==0&&snake->getDir().y ==1)
 	{
 		for (int nRowIndex = 0;nRowIndex<m_MapBlockUnit.size();nRowIndex++)
 		{
@@ -175,7 +176,7 @@ void GameLayer::MoveMapMaritx()
 			}
 		}
 	}
-	else if(snake->getDir()->x == 1&&snake->getDir()->y == 0)
+	else if(snake->getDir().x == 1&&snake->getDir().y == 0)
 	{
 		for (int nRowIndex=0;nRowIndex<m_MapBlockUnit.size();nRowIndex++)
 		{
@@ -204,7 +205,7 @@ void GameLayer::MoveMapMaritx()
 			}
 		}
 	}
-	else if (snake->getDir()->x == 0&&snake->getDir()->y == -1)
+	else if (snake->getDir().x == 0&&snake->getDir().y == -1)
 	{
 		for (int nRowIndex =(m_MapBlockUnit.size()-1);nRowIndex>=0;nRowIndex--)
 		{
@@ -245,8 +246,9 @@ void GameLayer::MoveMapMaritx()
 		}
 	}
 #pragma endregion 转向
-	
-	snake->shiftSnake(isChangeDir);
+	snake->pushCorner(isChangeDir);
+	snake->clearCorner();
+	snake->shiftSnake();
 	makeSnake();
 	//方向左
 	/*for (int nRowIndex = (m_MapBlockUnit.size()-1);nRowIndex>=0;nRowIndex--)
@@ -464,61 +466,23 @@ bool GameLayer::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent)
 }
 void GameLayer::ccTouchEnded(CCTouch *pTouch, CCEvent *pEvent)
 {
-	/*if (true)
+	if (!isChangeDir)
 	{
 		CCPoint curPoint = pTouch->getLocation();
 		
-		if(curPoint.x-prePoint.x>30&&fabs(curPoint.x-prePoint.x)>fabs(curPoint.y-prePoint.y)&&snake->Dir.x!=-1){//右
+		if(curPoint.x-prePoint.x>30&&fabs(curPoint.x-prePoint.x)>fabs(curPoint.y-prePoint.y)){//右
 			CCLog("right");
-			//这段代码还没想清楚s
-			/ *vector<vector<int>> tempMapMaritx(m_MapMaritx.size());
-			for (int i = 0;i<m_MapMaritx.size();i++)
-				tempMapMaritx[i].resize(m_MapMaritx.size());
-			for (int i = 0;i<m_MapMaritx.size();i++)
-			{
-				for (int j = 0;j<m_MapMaritx.size();j++)
-				{
-					tempMapMaritx[j][(m_MapMaritx.size()-1)-i] = m_MapMaritx[i][j];
-				}
-			}
-			m_MapMaritx = tempMapMaritx;
-			for (int nColIndex = 0;nColIndex<m_MapBlockUnit.size();nColIndex++)
-			{
-				for (int nRowIndex = 0;nRowIndex<m_MapBlockUnit.size();nRowIndex++)
-				{
-					MapUnit* tempUnit = m_MapBlockUnit[nColIndex][nRowIndex];
-					MapUnit* swapUnit = MapUnit::create(m_MapMaritx[tempUnit->x][tempUnit->y]);
-					swapUnit->x = tempUnit->x;swapUnit->y = tempUnit->y;
-					swapUnit->setPosition(ccp(nColIndex*(GRID)+(GRID/2),nRowIndex*(GRID)+(GRID/2)));
-					tempUnit->removeFromParent();
-					m_MapBlockUnit[nColIndex][nRowIndex] = swapUnit;
-					m_GameLayout->addChild(swapUnit);
-				}
-			}* /
-			/ *vector<vector<MapUnit*>> tempMapBlockUnit(m_MapBlockUnit.size());
-			for (int i = 0;i<m_MapBlockUnit.size();i++)
-			{
-				tempMapBlockUnit[i].resize(m_MapBlockUnit.size());
-			}
-			for (int nRowIndex = 0;nRowIndex<m_MapBlockUnit.size();nRowIndex++)
-			{
-				for (int nColIndex = 0;nColIndex<m_MapBlockUnit.size();nColIndex++)
-				{
-					MapUnit* tempUnit = m_MapBlockUnit[nRowIndex][nColIndex];
-					tempMapBlockUnit[nColIndex][(m_MapBlockUnit.size()-1)-nRowIndex] = tempUnit;
-					tempUnit->setPosition(ccp(nColIndex*(GRID)+(GRID/2),((m_MapBlockUnit.size()-1)-nRowIndex)*(GRID)+(GRID/2)));
-				}
-			}
-			m_MapBlockUnit = tempMapBlockUnit;* /
-			snake->Dir = ccp(1,0);
+			setDir(true);
+			m_GameLayout->runAction(CCSequence::create(CCRotateBy::create(gameSpeed,-90),CCCallFunc::create(this,callfunc_selector(GameLayer::animateOver)),NULL));
 			
 		}
-		else if(curPoint.x-prePoint.x<-30&&fabs(curPoint.x-prePoint.x)>fabs(curPoint.y-prePoint.y)&&snake->Dir.x!=1)//左
+		else if(curPoint.x-prePoint.x<-30&&fabs(curPoint.x-prePoint.x)>fabs(curPoint.y-prePoint.y))//左
 		{
 			CCLog("left");
-			snake->Dir = ccp(-1,0);
+			setDir(false);
+			m_GameLayout->runAction(CCSequence::create(CCRotateBy::create(gameSpeed,90),CCCallFunc::create(this,callfunc_selector(GameLayer::animateOver)),NULL));
 		}
-		else if(curPoint.y - prePoint.y>30&&fabs(curPoint.y-prePoint.y)>fabs(curPoint.x-prePoint.x)&&snake->Dir.y!=-1)//上
+		/*else if(curPoint.y - prePoint.y>30&&fabs(curPoint.y-prePoint.y)>fabs(curPoint.x-prePoint.x)&&snake->Dir.y!=-1)//上
 		{
 			CCLog("up");
 			snake->Dir = ccp(0,1);
@@ -527,10 +491,9 @@ void GameLayer::ccTouchEnded(CCTouch *pTouch, CCEvent *pEvent)
 		{
 			CCLog("down");
 			snake->Dir = ccp(0,-1);
-		}
-		//this->Move(0);
+		}*/
 		isChangeDir = true;
-	}*/
+	}
 }
 void GameLayer::ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent)
 {
@@ -546,14 +509,14 @@ void GameLayer::GamePause(CCObject *sender)
 		isPause = false;
 		CCSprite* pSprite = CCSprite::create("pause.png");
 		Item->setNormalImage(pSprite);
-		//this->schedule(schedule_selector(GameLayer::Move), 0.5f);
+		this->schedule(schedule_selector(GameLayer::Move),gameSpeed);
 	}
 	else
 	{
 		isPause = true;
 		CCSprite* pSprite = CCSprite::create("start.png");
 		Item->setNormalImage(pSprite);
-		//this->unschedule(schedule_selector(GameLayer::Move));
+		this->unschedule(schedule_selector(GameLayer::Move));
 	}
 }
 
@@ -572,7 +535,7 @@ void GameLayer::GameRestart(CCObject *sender)
 	CCDirector::sharedDirector()->replaceScene(CCTransitionTurnOffTiles::create(0.5,pScene));
 }
 
-
+//初始化地图
 void GameLayer::initMapMaritx()
 {	
 
@@ -587,42 +550,9 @@ void GameLayer::initMapMaritx()
 			intV.push_back(1);
 		m_MapMaritx.push_back(intV);
 	}
-	/*for (int i = 0;i<4;i++)
-	{
-		if (i == 3)
-		{
-			m_MapMaritx[10][i] = 77;
-		}
-		else
-		{
-			m_MapMaritx[10][i] = 7;
-		}
-	}*/
-	snake->head  = new ccp(19,4);
-	snake->body->push_back(snake->head);
-	snake->body->push_back(new ccp(19,3));
-	snake->body->push_back(new ccp(19,2));
-	snake->body->push_back(new ccp(19,1));
-	setDir(0,1);
-	/*int x = 0;
-	bool isFinish = false;
-	while (x<this->m_width && !isFinish)
-	{
-		int y = 0;
-		while(y<this->m_height && !isFinish)
-		{
-			if (m_MapMaritx[x][y] == MapType(SnakeHead))
-			{
-				snake->head->x = x;
-				snake->head->y = y;
-				snake->body->push_back(snake->head);
-				isFinish = true;
-			}
-			y++;
-		}
-		x++;
-	}*/
-	//initSnake();
+	m_MapMaritx[19][10] = 7;
+	snake->init(ccp(19,4),ccp(1,0));
+	setDir(1,0);
 	initMapUnit();
 }
 
@@ -722,9 +652,9 @@ void GameLayer::initMapUnit()
 		{
 			if (i==0&&j==0)
 			{
-				MapUnit* item = MapUnit::create(m_MapMaritx[CalculatePosition(snake->head->x,center,true,true)][CalculatePosition(snake->head->y,center,false,true)]);
-				item->x = x_zero =CalculatePosition(snake->head->x,center-1,true,true);
-				item->y = y_zero = CalculatePosition(snake->head->y,center-1,false,true);
+				MapUnit* item = MapUnit::create(m_MapMaritx[CalculatePosition(snake->getHead()->x,center,true,true)][CalculatePosition(snake->getHead()->y,center,false,true)]);
+				item->x = x_zero =CalculatePosition(snake->getHead()->x,center-1,true,true);
+				item->y = y_zero = CalculatePosition(snake->getHead()->y,center-1,false,true);
 				item->setPosition(ccp((GRID/2),(GRID/2)));
 				MapTempUnit.push_back(item);
 				m_GameLayout->addChild(item);
@@ -783,10 +713,12 @@ int GameLayer::CalculatePosition(int Num_1,int Num_2,bool isHorizontal,bool isZe
 	}
 }
 
+/*
 void GameLayer::setGameLayerDir()
 {
-	CCPoint* pDir = snake->getDir();
-}
+	CCPoint* pDir = getHead()->getDir();
+}*/
+/*
 void GameLayer::setDir(bool positive)
 {
 	if (positive)
@@ -836,7 +768,8 @@ void GameLayer::setDir(int x,int y)
 	else
 		CCLog("not find");
 	setGameLayerDir();
-}
+}*/
+
 
 void GameLayer::makeSnake()
 {
@@ -846,15 +779,85 @@ void GameLayer::makeSnake()
 		{
 			MapUnit* tempUnit = m_MapBlockUnit[nRowIndex][nColIndex];
 			tempUnit->removeAllChildren();
-			list<CCPoint*>::iterator begin = snake->body->begin();
+			//头部
+			list<snakeUnit*>::iterator begin = snake->body->begin();
 			while (begin!= snake->body->end())
 			{
-				CCPoint* pPoint = *begin;
+
+				snakeUnit* pPoint = *begin;
+				
 				if (tempUnit->x == pPoint->x && tempUnit->y == pPoint->y)
 				{
-					snakeBlock* snakeBodyUnit = snakeBlock::create(snakeBody);
+					snakeBlock* snakeBodyUnit;
+					//蛇头蛇尾单独拿出来处理
+					if (pPoint== snake->getHead())
+					{
+						snakeBodyUnit = snakeBlock::create(snakeHead,pPoint->Dir);
+					}
+					else if(pPoint == snake->getTail())
+					{
+						snakeBodyUnit = snakeBlock::create(snakeTail,pPoint->Dir);
+					}
+					else
+					{
+						cornerUnit* corner = snake->isCorner(pPoint);
+						//蛇身转弯处
+						if (corner!= NULL)
+						{
+#pragma region 处理蛇身转弯的一大段代码,你不会想要看到的
+							if (corner->beforeDir.x == 1 && corner->currDir.y == 1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeRight);
+								snakeBodyUnit->setFlipY(true);
+							}
+							else if(corner->beforeDir.x == 1 && corner->currDir.y == -1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeRight);
+							}
+							else if(corner->beforeDir.x == -1 && corner->currDir.y == 1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeLeft);
+								snakeBodyUnit->setFlipY(true);
+
+							}
+							else if(corner->beforeDir.x == -1 && corner->currDir.y == -1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeLeft);
+							}
+							else if(corner->beforeDir.y == -1 && corner->currDir.x == -1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeRight);
+								snakeBodyUnit->setRotation(90.0f);
+							}
+							else if(corner->beforeDir.y == -1 && corner->currDir.x == 1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeRight);
+								snakeBodyUnit->setRotation(90.0f);
+								snakeBodyUnit->setFlipY(true);
+
+							}
+							else if(corner->beforeDir.y == 1 && corner->currDir.x == 1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeLeft);
+								snakeBodyUnit->setRotation(90.0f);
+								snakeBodyUnit->setFlipY(true);
+
+							}
+							else if(corner->beforeDir.y == 1 && corner->currDir.x == -1)
+							{
+								snakeBodyUnit = snakeBlock::create(snakeLeft);
+								snakeBodyUnit->setRotation(90.0f);
+
+							}
+#pragma endregion 
+						}
+						else
+						{
+							snakeBodyUnit = snakeBlock::create(snakeBody,pPoint->Dir);
+						}
+					}
 					//MapUnit* snakeBodyUnit = MapUnit::create(7);
-					snakeBodyUnit->setPosition(ccp(nRowIndex*GRID+(GRID/2),nColIndex*GRID+(GRID/2)));
+					//snakeBodyUnit->setPosition(ccp(nRowIndex*GRID+(GRID/2),nColIndex*GRID+(GRID/2)));
 					snakeBodyUnit->setPosition(ccp((GRID/2),(GRID/2)));
 					tempUnit->addChild(snakeBodyUnit);
 				}
@@ -870,20 +873,54 @@ void GameLayer::animateOver()
 	this->isChangeDir = false;
 }
 
-/*
-void GameLayer::draw()
+void GameLayer::setDir(int x,int y)
 {
-CCLayerColor::draw();
-CHECK_GL_ERROR_DEBUG();
-glLineWidth( 1.0f ); 
-ccDrawColor4B(191,191,191,255);
-ccDrawRect(ccp(GameMatrix.getMinX(),GameMatrix.getMinY()),ccp(GameMatrix.getMaxX(),GameMatrix.getMaxY()));
-for (int i=0;i<MARITX_X;i++)
-{
-ccDrawLine(ccp(i*GRID+GameMatrix.getMinX(),GameMatrix.getMinY()),ccp(i*GRID+GameMatrix.getMinX(),GameMatrix.getMaxY()));
+	bool isFind =false;
+	for (list<CCPoint>::iterator begin = DirList.begin();begin != DirList.end();begin++)
+	{
+		CCPoint pPoint = *begin;
+		if (pPoint.x == x&&pPoint.y == y)
+		{
+			this->m_currentDir = begin;
+			snake->setDir(begin->x,begin->y);
+			isFind = true;
+		}
+	}
+	if(isFind)
+		CCLog("find dir");
+	else
+		CCLog("not find");
 }
-for (int i=0;i<MARITX_Y;i++)
+
+
+void GameLayer::setDir(bool positive)
 {
-ccDrawLine(ccp(GameMatrix.getMinX(),i*GRID+GameMatrix.getMinY()),ccp(GameMatrix.getMaxX(),i*GRID+GameMatrix.getMinY()));
+	if (positive)
+	{
+		if (++m_currentDir == DirList.end())
+			m_currentDir = DirList.begin();
+	}
+	else
+	{
+		if (m_currentDir == DirList.begin())
+			m_currentDir = --DirList.end();
+		else
+			--m_currentDir;
+	}
+	CCPoint temp = *m_currentDir;
+	snake->setDir(temp.x,temp.y);
 }
-}*/
+
+
+void GameLayer::InitLayerRote()
+{
+	
+	if (snake->getDir().y == 1)
+		this->m_GameLayout->setRotation(0);
+	else if(snake->getDir().y == -1)
+		this->m_GameLayout->setRotation(180);
+	else if(snake->getDir().x == -1)
+		this->m_GameLayout->setRotation(-90);
+	else if(snake->getDir().x == 1)
+		this->m_GameLayout->setRotation(-90);
+}
