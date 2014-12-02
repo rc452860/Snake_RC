@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<UIProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <filePath>F:\Pass\Pass.xml.ui</filePath>
+  <Version>1.1.0.0</Version>
+  <Name>Pass</Name>
+  <ProjectDir>F:\Pass</ProjectDir>
+  <JsonFileName>Pass.json</JsonFileName>
+  <Resources>F:\Pass\Resources</Resources>
+  <JsonFolder>F:\Pass\Json</JsonFolder>
+  <JsonList>
+    <string>Pass_1.json</string>
+  </JsonList>
+  <imageFileList />
+  <JsonSuffix>.json</JsonSuffix>
+  <CurrentUIJson>Pass_1.json</CurrentUIJson>
+  <CanvasSize>
+    <Width>675</Width>
+    <Height>1200</Height>
+  </CanvasSize>
+</UIProject>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<AnimationProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <filePath>G:\cocos2d-x-2.2.1\Projects\snake\素材\Main_Interface\Main_Interface.xml.animation</filePath>
+  <Version>0.0.0.0</Version>
+  <Name>Main_Interface</Name>
+  <ProjectDir>G:\cocos2d-x-2.2.1\Projects\snake\素材\Main_Interface</ProjectDir>
+  <JsonFileName>Main_Interface.json</JsonFileName>
+  <Resources>G:\cocos2d-x-2.2.1\Projects\snake\素材\Main_Interface\Resources</Resources>
+  <JsonFolder>G:\cocos2d-x-2.2.1\Projects\snake\素材\Main_Interface\Json</JsonFolder>
+  <JsonList />
+  <ResourceFileList>
+    <string>Main_Interface0.plist</string>
+  </ResourceFileList>
+  <CanvasSize>
+    <Width>0</Width>
+    <Height>0</Height>
+  </CanvasSize>
+  <bBatchImage>true</bBatchImage>
+</AnimationProject>
